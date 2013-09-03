@@ -2,7 +2,10 @@
 ## My ignores
 #################
 
+*Test/
 resources/
+todo*
+uml*
 
 #################
 ## Eclipse
