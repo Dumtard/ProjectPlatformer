@@ -13,7 +13,7 @@
 
 class MainState : public GameState {
 public:
-  MainState(sf::RenderWindow &window);
+  MainState(sf::RenderWindow &window, Network &network, std::string name);
   ~MainState();
 
   void getNetwork();
@@ -24,7 +24,6 @@ public:
   void setNetwork();
   
 private:
-  sf::RenderWindow &window_;
   sf::View camera_;
 
   MainView view_;
@@ -33,8 +32,6 @@ private:
   ObjectManager objectManager_;
 
   Map currentMap_;
-
-  Network network_;
 
   std::string name_;
 };

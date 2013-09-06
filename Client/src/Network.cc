@@ -2,8 +2,7 @@
 
 #include <iostream>
 
-Network::Network(ObjectManager &objectManager, MainView &view)
-: objectManager_(objectManager), view_(view) {
+Network::Network() {
   server = sf::IpAddress(192, 168, 2, 22);
   // server = sf::IpAddress("dumtard.no-ip.biz");
   sPort = 1338;
@@ -29,20 +28,24 @@ void Network::connect(std::string account) {
 }
 
 void Network::disconnect() {
+  if (account_.compare("") == 0) {
+    return;
+  }
+  
   packet.clear();
   packet << "CON" << account_ << false;
   socket.send(packet, server, sPort);
   packet.clear();
 }
 
-void Network::addMove(sf::Vector2f velocity) {
+void Network::addMove(sf::Vector2f velocity, ObjectManager &objectManager) {
   packet << "MOV" << velocity;
-  packet << "POS" << objectManager_.getPlayer(account_)->getPosition();
+  packet << "POS" << objectManager.getPlayer(account_)->getPosition();
 }
 
-void Network::addJump(sf::Vector2f velocity) {
+void Network::addJump(sf::Vector2f velocity, ObjectManager &objectManager) {
   packet << "JMP" << velocity;
-  packet << "POS" << objectManager_.getPlayer(account_)->getPosition();
+  packet << "POS" << objectManager.getPlayer(account_)->getPosition();
 }
 
 void Network::setMap(Map &map) {
@@ -95,26 +98,27 @@ bool Network::getMap(Map &map) {
   return false;
 }
 
-void Network::receive(ObjectManager &objectManager) {
+void Network::receive(ObjectManager &objectManager, View &view) {
   sf::IpAddress temp;
   unsigned short temp2;
   packet.clear();
   socket.receive(packet, temp, temp2);
 
   packet >> buffer;
+
   if (buffer.compare("CON") == 0) {
     bool connection;
     packet >> buffer >> connection;
     if (connection) {
       Player *player = new Player();
-      objectManager_.add(buffer, player);
-      view_.set(buffer);
+      objectManager.add(buffer, player);
+      view.set(buffer);
     } else {
-      //Remove player from objectManager_
+      //Remove player from objectManager
     }
   } else if (buffer.compare("MOV") == 0) {
     packet >> buffer;
-    Player *player = objectManager_.getPlayer(buffer);
+    Player *player = objectManager.getPlayer(buffer);
     sf::Vector2f velocity;
     sf::Vector2f position;
     packet >> velocity;
@@ -133,7 +137,7 @@ void Network::receive(ObjectManager &objectManager) {
     }
   } else if (buffer.compare("JMP") == 0) {
     packet >> buffer;
-    Player *player = objectManager_.getPlayer(buffer);
+    Player *player = objectManager.getPlayer(buffer);
     sf::Vector2f velocity;
     sf::Vector2f position;
     packet >> velocity;

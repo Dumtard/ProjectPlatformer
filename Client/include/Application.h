@@ -6,23 +6,40 @@
 
 #include "SFML/Graphics.hpp"
 
+#include "LoginState.h"
 #include "MainState.h"
 #include "Player.h"
 
-class Application
-{
+class Application {
 public:
-  Application();
+  static Application& getInstance() {
+    static Application instance;
+    return instance;
+  }
   ~Application();
 
   void loop();
 
+  //Others
+  void changeState(std::unique_ptr<GameState> state);
+
 private:
-  sf::RenderWindow window;
-  sf::Image icon;
-  sf::Event event;
+  Application() {
+    initialize();
+  };
+
+  Application(Application const&);
+  void operator=(Application const&);
+
+  void initialize();
+
+  sf::RenderWindow window_;
+  sf::Image icon_;
+  sf::Event event_;
 
   std::unique_ptr<GameState> state_;
+
+  Network network_;
 
   //loop control
   sf::Clock clock;
@@ -38,9 +55,6 @@ private:
   void update();
   void render(float delta);
   void setNetwork();
-
-  //Others
-  void changeState(std::unique_ptr<GameState> state);
 };
 
 #endif

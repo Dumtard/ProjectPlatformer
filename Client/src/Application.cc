@@ -2,14 +2,14 @@
 
 #include <iostream>
 
-Application::Application() {
-  window.create(sf::VideoMode(800, 600), "Maplestory2", sf::Style::Close);
-  if (!icon.loadFromFile("resources/Icon.png"))
+ void Application::initialize() {
+  window_.create(sf::VideoMode(800, 600), "Client", sf::Style::Close);
+  if (!icon_.loadFromFile("resources/Icon.png"))
     std::cout << "Failed to load Icon";
 
-  window.setVerticalSyncEnabled(true);
-  window.setKeyRepeatEnabled(false);
-  window.setIcon(32, 32, icon.getPixelsPtr());
+  window_.setVerticalSyncEnabled(true);
+  window_.setKeyRepeatEnabled(false);
+  window_.setIcon(32, 32, icon_.getPixelsPtr());
 
   elapsed = clock.restart().asSeconds();
   lag = 0.0f;
@@ -17,7 +17,7 @@ Application::Application() {
   framerate = 60;
   MS_PER_UPDATE = 1.0f / (float)framerate;
 
-  state_ = std::unique_ptr<GameState>(new MainState(window));
+  state_ = std::unique_ptr<GameState>(new LoginState(window_, network_));
 }
 
 Application::~Application() {
@@ -25,7 +25,7 @@ Application::~Application() {
 }
 
 void Application::loop() {
-  while (window.isOpen()) {
+  while (window_.isOpen()) {
     elapsed = clock.restart().asSeconds();
     lag += elapsed;
 
@@ -51,22 +51,22 @@ void Application::getNetwork() {
 
 void Application::input() {
   state_->input();
-  while (window.pollEvent(event)) {
-    switch (event.type) {
+  while (window_.pollEvent(event_)) {
+    switch (event_.type) {
       case sf::Event::Closed:
-        window.close();
+        window_.close();
         break;
 
       case sf::Event::KeyPressed:
-        if (event.key.code == sf::Keyboard::Escape) {
-          window.close();
+        if (event_.key.code == sf::Keyboard::Escape) {
+          window_.close();
         }
         break;
 
       default:
         break;
     }
-    state_->input(event);
+    state_->input(event_);
   }
 }
 
@@ -75,11 +75,11 @@ void Application::update() {
 }
 
 void Application::render(float delta) {
-  window.clear(sf::Color(0, 200, 255));
+  window_.clear(sf::Color(0, 200, 255));
 
   state_->render(delta);
 
-  window.display();
+  window_.display();
 }
 
 void Application::setNetwork() {

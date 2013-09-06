@@ -62,7 +62,7 @@ void PlayerController::input() {
         clock.restart();
         player->changeAnimation("jumping");
 
-        network_.addJump(player->getVelocity());
+        network_.addJump(player->getVelocity(), objectManager_);
       }
     }
   }
@@ -80,18 +80,18 @@ void PlayerController::input(sf::Event event) {
       break;
     case sf::Event::KeyPressed:
       if (event.key.code == sf::Keyboard::Right) {
-        network_.addMove(player->getVelocity());
+        network_.addMove(player->getVelocity(), objectManager_);
       }
       if (event.key.code == sf::Keyboard::Left) {
-        network_.addMove(player->getVelocity());
+        network_.addMove(player->getVelocity(), objectManager_);
       }
       break;
     case sf::Event::KeyReleased:
       if (event.key.code == sf::Keyboard::Right) {
-        network_.addMove(player->getVelocity());
+        network_.addMove(player->getVelocity(), objectManager_);
       }
       if (event.key.code == sf::Keyboard::Left) {
-        network_.addMove(player->getVelocity());
+        network_.addMove(player->getVelocity(), objectManager_);
       }
       break;
     default:

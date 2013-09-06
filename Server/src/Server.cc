@@ -84,7 +84,7 @@ void Server::receive() {
     packet >> request;
     if (request) {
       packet.clear();
-      if (clients_.size() < 1) {
+      if (clients_.size() <= 1) {
         packet << "MAP" << false;
         socket.send(packet, client, clientPort);
         packet.clear();

@@ -15,25 +15,22 @@
 
 class Network {
 public:
-  Network(ObjectManager &objectManager, MainView &view);
+  Network();
   ~Network();
 
   void connect(std::string account);
   void disconnect();
 
-  void receive(ObjectManager &objectManager);
+  void receive(ObjectManager &objectManager, View &view);
   void send();
 
-  void addMove(sf::Vector2f velocity);
-  void addJump(sf::Vector2f velocity);
+  void addMove(sf::Vector2f velocity, ObjectManager &objectManager);
+  void addJump(sf::Vector2f velocity, ObjectManager &objectManager);
 
   void setMap(Map &map);
   bool getMap(Map &map);
 
 private:
-  ObjectManager &objectManager_;
-  MainView &view_;
-
   sf::UdpSocket socket;
   sf::Packet packet;
 

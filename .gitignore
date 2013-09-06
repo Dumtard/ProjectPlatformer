@@ -3,9 +3,8 @@
 #################
 
 *Test/
-resources/
 todo*
-uml*
+*.xml
 
 #################
 ## Eclipse

@@ -2,28 +2,34 @@
 
 #include <iostream>
 
-MainState::MainState(sf::RenderWindow &window)
-: window_(window), view_(window, objectManager_, currentMap_),
-  controller_(objectManager_, currentMap_, camera_, network_),
-  network_(objectManager_, view_) {
+MainState::MainState(sf::RenderWindow &window, Network &network,
+                     std::string name)
+: GameState(window, network), view_(window, objectManager_, currentMap_),
+  controller_(objectManager_, currentMap_, camera_, network_) {
   
   camera_.reset(sf::FloatRect(0, 0, 800, 600));
 
-  window.setView(camera_);
+  window_.setView(camera_);
+  window_.setKeyRepeatEnabled(false);
 
-  std::cin >> name_;
+  name_ = name;
+
   controller_.setAccount(name_);
 
   Player *player = new Player();
   objectManager_.add(name_, player);
+
+  // HACK was receiving CON from other players on connect was screwing up
+  // map generation and was not placing all other players into Object Manager
+  network_.receive(objectManager_, view_);
 
   //Get Map from server or load and send
   if (!network_.getMap(currentMap_)) {
     currentMap_.generate();
     network_.setMap(currentMap_);
   }
-  
-  network_.connect(name_);
+
+  // network_.connect(name_);
 
   //Get yourself
   // network_.getPlayerAttributes("Admin", player);
@@ -37,7 +43,7 @@ MainState::~MainState() {
 
 }
 void MainState::getNetwork() {
-  network_.receive(objectManager_);
+  network_.receive(objectManager_, view_);
 }
 
 void MainState::input(sf::Event event) {

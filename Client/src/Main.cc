@@ -3,8 +3,7 @@
 #include "Application.h"
 
 int main() {
-  Application game;
-  game.loop();
+  Application::getInstance().loop();
 
   return 0;
 }
